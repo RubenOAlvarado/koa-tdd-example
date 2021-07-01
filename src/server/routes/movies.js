@@ -36,4 +36,79 @@ router.get(`${BASE_URL}/:id`, async (ctx) => {
     }
 });
 
+router.post(`${BASE_URL}`, async (ctx) => {
+    try {
+        const movie = await queries.addMovie(ctx.request.body);
+        if(movie.length){
+            ctx.status = 201;
+            ctx.body = {
+                status: 'success',
+                data: movie
+            };
+        }else{
+            ctx.status = 400;
+            ctx.body = {
+                status: 'error',
+                message: 'Something went wrong'
+            };
+        }
+    } catch (e) {
+        ctx.status = 400;
+        ctx.body = {
+            status: 'error',
+            message: e || 'Sorry, an error has ocurred'
+        };
+    }
+});
+
+router.put(`${BASE_URL}/:id`, async (ctx) => {
+    try {
+        const movie = await queries.updateMovie(ctx.params.id, ctx.request.body);
+        if(movie.length){
+            ctx.status = 200;
+            ctx.body = {
+                status: 'success',
+                data: movie
+            };
+        }else{
+            ctx.status = 404;
+            ctx.body = {
+                status: 'error',
+                message: 'That movie does not exist.'
+            };
+        }
+    } catch (e) {
+        ctx.status = 400;
+        ctx.body = {
+            status: 'error',
+            message: e.message || 'Sorry, an error has ocurred'
+        };
+    }
+});
+
+router.delete(`${BASE_URL}/:id`, async (ctx) => {
+    try {
+        const movie = await queries.deleteMovie(ctx.params.id);
+        if (movie.length) {
+            ctx.status = 200;
+            ctx.body = {
+                status: 'success',
+                data: movie
+            };
+        }else{
+            ctx.status = 404;
+            ctx.body = {
+                status: 'error',
+                message: 'That movie does not exist.'
+            };
+        }
+    } catch (e) {
+        ctx.status = 400;
+        ctx.body = {
+            status: 'error',
+            message: err.message || 'Sorry, an error has occurred.'
+        };
+    }
+});
+
 module.exports = router;
